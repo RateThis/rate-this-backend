@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model comments {
+  id_comment    Int      @id @default(autoincrement())
+  fk_user       Int
+  id_review     String   @db.Char(15)
+  text          String?  @db.VarChar(10000)
+  creation_time DateTime @default(now()) @db.DateTime(0)
+
+  @@index([fk_user], map: "fk_user")
+  @@index([id_review], map: "id_review")
+}
+
+model reviews {
+  id_review     String              @unique(map: "id_review") @db.Char(15)
+  id_external   String              @db.VarChar(200)
+  fk_user       Int
+  review_type   reviews_review_type
+  text          String?             @db.VarChar(10000)
+  creation_time DateTime            @default(now()) @db.DateTime(0)
+
+  @@index([fk_user], map: "fk_user")
+}
+
+model users {
+  pk_user       Int      @id @default(autoincrement())
+  id_user       String   @unique(map: "id_user") @db.Char(15)
+  email         String   @unique(map: "email") @db.VarChar(255)
+  username      String   @db.VarChar(50)
+  password      String   @db.Char(60)
+  register_time DateTime @default(now()) @db.DateTime(0)
+}
+
+enum reviews_review_type {
+  movie
+  series
+  game
+  book
+  music
+}
