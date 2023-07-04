@@ -5,8 +5,8 @@ export async function createUser(reqBody) {
   try {
     return await prisma.users.create({
       data: {
-        id_user: reqBody.id_user,
-        username: reqBody.username,
+        uuid: reqBody.uuid,
+        name: reqBody.name,
         email: reqBody.email,
         password: reqBody.password,
       },
@@ -16,12 +16,12 @@ export async function createUser(reqBody) {
   }
 }
 
-export async function deleteUserById(userId) {
+export async function deleteUserById(id) {
   try {
-    if (pk_user) {
+    if (id) {
       return await prisma.users.delete({
         where: {
-          pk_user: userId,
+          id: id,
         },
       });
     }

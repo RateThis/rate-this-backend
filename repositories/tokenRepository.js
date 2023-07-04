@@ -8,7 +8,7 @@ dotenv.config();
 async function getRefreshToken(userId) {
   if (userId) {
     return await prisma.refreshtokens.findUnique({
-      where: { pk_user: userId },
+      where: { id_user: userId },
     });
   }
   return null;
@@ -19,13 +19,13 @@ async function updateRefreshToken(userId, refreshToken) {
     try {
       return await prisma.refreshtokens.upsert({
         where: {
-          pk_user: userId,
+          id_user: userId,
         },
         update: {
           refresh_token: refreshToken,
         },
         create: {
-          pk_user: userId,
+          id_user: userId,
           refresh_token: refreshToken,
         },
       });
@@ -47,7 +47,7 @@ export async function generateRefreshToken(payload) {
   const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
     expiresIn: process.env.REFRESH_TOKEN_LIFE * 1000,
   });
-  await updateRefreshToken(payload.pk_user, refreshToken);
+  await updateRefreshToken(payload.id, refreshToken);
   return refreshToken;
 }
 
@@ -76,7 +76,7 @@ export function authAccessToken(req, res, next) {
       return res.redirect("/auth/token");
     }
     req.body.email = user.email;
-    req.body.pk_user = user.pk_user;
+    req.body.id = user.id;
     next();
   });
 }
@@ -86,14 +86,14 @@ export async function authRefreshToken(req, res, next) {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) return res.sendStatus(401);
     const user = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-    const userRemote = await getRefreshToken(user.pk_user);
+    const userRemote = await getRefreshToken(user.id);
     if (userRemote.refresh_token !== refreshToken) return res.sendStatus(403);
     req.body.accessToken = generateAccessToken({
       email: user.email,
-      pk_user: user.pk_user,
+      id: user.id,
     });
     req.body.email = user.email;
-    req.body.pk_user = user.pk_user;
+    req.body.id = user.id;
     next();
   } catch (error) {
     return res.sendStatus(401);
