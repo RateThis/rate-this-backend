@@ -38,6 +38,11 @@ model users {
   register_time DateTime @default(now()) @db.DateTime(0)
 }
 
+model refreshtokens {
+  pk_user       Int    @id
+  refresh_token String @db.VarChar(512)
+}
+
 enum reviews_review_type {
   movie
   series

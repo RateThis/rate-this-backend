@@ -16,6 +16,21 @@ export async function createUser(reqBody) {
   }
 }
 
+export async function deleteUserById(userId) {
+  try {
+    if (pk_user) {
+      return await prisma.users.delete({
+        where: {
+          pk_user: userId,
+        },
+      });
+    }
+    return;
+  } catch (error) {
+    return null;
+  }
+}
+
 export async function getUserByEmail(email) {
   try {
     if (email) {
@@ -27,13 +42,4 @@ export async function getUserByEmail(email) {
   } catch (error) {
     return null;
   }
-}
-
-export async function getUserById(id) {
-  if (id) {
-    return await prisma.users.findUnique({
-      where: { user_id: id },
-    });
-  }
-  return;
 }
