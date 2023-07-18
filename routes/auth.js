@@ -24,7 +24,7 @@ router.route("/login").post(async (req, res) => {
       });
       tokenRep.setAccessTokenCookie(res, accessToken);
       tokenRep.setRefreshTokenCookie(res, refreshToken);
-      res.sendStatus(200);
+      res.status(200).send(true);
     });
   } catch {
     return res.sendStatus(500);
@@ -55,7 +55,7 @@ router.route("/register").post(async (req, res) => {
         if (!(await userRep.createUser(req.body))) {
           return res.sendStatus(500);
         }
-        return res.sendStatus(201);
+        return res.status(201).send(true);
       } else {
         res.sendStatus(500);
       }
