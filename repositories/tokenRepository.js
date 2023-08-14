@@ -69,16 +69,20 @@ export function setRefreshTokenCookie(res, refreshToken) {
 
 export function authAccessToken(req, res, next) {
   const accessToken = req.cookies.accessToken;
-  if (!accessToken) return res.redirect("/auth/token");
-  jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) {
-      res.clearCookie("accessToken");
-      return res.redirect("/auth/token");
-    }
-    req.body.email = user.email;
-    req.body.id = user.id;
-    next();
-  });
+  if (!accessToken) {
+    return res.redirect("/auth/token");
+  }
+  else {
+    jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+      if (err) {
+        res.clearCookie("accessToken");
+        return res.redirect("/auth/token");
+      }
+      req.body.email = user.email;
+      req.body.id = user.id;
+      next();
+    });
+  }
 }
 
 export async function authRefreshToken(req, res, next) {

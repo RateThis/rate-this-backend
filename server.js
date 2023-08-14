@@ -6,6 +6,7 @@ import cors from "cors";
 import { authAccessToken } from "./repositories/tokenRepository.js";
 import authRouter from "./routes/auth.js";
 import reviewRouter from "./routes/review.js";
+import userRouter from "./routes/user.js";
 
 dotenv.config();
 const app = express();
@@ -35,9 +36,11 @@ app.use((req, res, next) => {
 
 app.use("/auth", authRouter);
 
-app.use(authAccessToken);
+// app.use(authAccessToken);
 
 app.use("/review", reviewRouter);
+
+app.use("/user", userRouter);
 
 app.listen(process.env.PORT || 8080, () => {
   console.log(`Server is running on port: ${process.env.PORT || 8080}`);

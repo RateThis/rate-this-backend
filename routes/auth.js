@@ -33,16 +33,16 @@ router.route("/login").post(async (req, res) => {
 
 router.route("/token").get(tokenRep.authRefreshToken, async (req, res) => {
   try {
-    if (!req.body.accessToken) return res.sendStatus(401);
+    if (!req.body.accessToken) return res.status(401).json({ refresh: false });
     const refreshToken = await tokenRep.generateRefreshToken({
       email: req.body.email,
       id: req.body.id,
     });
     tokenRep.setAccessTokenCookie(res, req.body.accessToken);
     tokenRep.setRefreshTokenCookie(res, refreshToken);
-    res.sendStatus(200);
+    return res.status(401).json({ refresh: true });
   } catch (error) {
-    res.sendStatus(401);
+    return res.status(401).json({ refresh: false });
   }
 });
 
@@ -65,10 +65,11 @@ router.route("/register").post(async (req, res) => {
   }
 });
 
-router.use(tokenRep.authAccessToken);
+// router.use(tokenRep.authAccessToken);
 
-router.route("/test").get((req, res) => {
-  return res.json("/test").status(201);
+router.route("/test").get(tokenRep.authAccessToken, (req, res) => {
+  console.log("/test");
+  return res.sendStatus(200);
 });
 
 export default router;

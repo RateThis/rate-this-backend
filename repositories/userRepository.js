@@ -35,10 +35,21 @@ export async function getUserByEmail(email) {
   try {
     if (email) {
       return await prisma.users.findUnique({
-        where: { email: email },
+        where: { email },
       });
     }
     return;
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function getUserById(id) {
+  if (isNaN(id)) return null;
+  try {
+    return await prisma.users.findUnique({
+      where: { id },
+    });
   } catch (error) {
     return null;
   }
